@@ -19,3 +19,42 @@ from sklearn.preprocessing import StandardScaler
 st_x = StandardScaler()    
 x_train = st_x.fit_transform(x_train)    
 x_test = st_x.transform(x_test)          
+
+#Fitting Decision Tree classifier to the training set  
+from sklearn.ensemble import RandomForestClassifier  
+classifier = RandomForestClassifier(n_estimators = 10, criterion = "entropy")  
+classifier.fit(x_train, y_train)  
+
+RandomForestClassifier(bootstrap=True, class_weight=None, criterion='entropy',
+  max_depth = None, max_features = 'auto', max_leaf_nodes = None,
+  min_impurity_decrease = 0.0, 
+  min_samples_leaf = 1, min_samples_split = 2,
+  min_weight_fraction_leaf = 0.0, n_estimators = 10,
+  n_jobs = None, oob_score = False, random_state = None,
+  verbose = 0, warm_start = False)
+
+#Predicting the test set result  
+y_pred= classifier.predict(x_test)       
+
+
+#Creating the Confusion matrix  
+from sklearn.metrics import confusion_matrix  
+cm = confusion_matrix(y_test, y_pred)  
+
+
+from matplotlib.colors import ListedColormap  
+x_set, y_set = x_train, y_train  
+x1, x2 = nm.meshgrid(nm.arange(start = x_set[:, 0].min() - 1, stop = x_set[:, 0].max() + 1, step  =0.01),  
+nm.arange(start = x_set[:, 1].min() - 1, stop = x_set[:, 1].max() + 1, step = 0.01))  
+mtp.contourf(x1, x2, classifier.predict(nm.array([x1.ravel(), x2.ravel()]).T).reshape(x1.shape),  
+alpha = 0.75, cmap = ListedColormap(('purple','green' )))  
+mtp.xlim(x1.min(), x1.max())  
+mtp.ylim(x2.min(), x2.max())  
+for i, j in enumerate(nm.unique(y_set)):  
+  mtp.scatter(x_set[y_set == j, 0], x_set[y_set == j, 1],  
+    c = ListedColormap(('purple', 'green'))(i), label = j)  
+mtp.title('Random Forest Algorithm (Training set)')  
+mtp.xlabel('Age')  
+mtp.ylabel('Estimated Salary')  
+mtp.legend()  
+mtp.show()  
